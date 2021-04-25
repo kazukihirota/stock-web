@@ -1,0 +1,15 @@
+.searchBySymbol {
+  margin-top: 1em;
+}
+
+.home-background {
+  background-image: url("../background.jpg");
+  background-size: cover;
+  background-repeat: no-repeat;
+  color: white;
+  padding-top: 10em;
+  padding-bottom: 10em;
+}
+.home-background > h1 {
+  font-size: 10em;
+}

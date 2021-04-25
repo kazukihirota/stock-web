@@ -13,6 +13,12 @@
   }
 }
 
+.Nav-link {
+  color: #282c34;
+  margin: 1rem;
+  text-decoration: none !important;
+}
+
 .App-header {
   background-color: #282c34;
   min-height: 100vh;
