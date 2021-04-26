@@ -1,0 +1,48 @@
+header {
+  padding: 10px 0;
+  background-color: rgba(56, 50, 50);
+  box-shadow: 5px 5px 5px grey;
+  text-shadow: 2px 2px black;
+  color: white;
+}
+
+main {
+  padding-top: 1em;
+  background-color: white;
+}
+
+.industryButton {
+  margin: 5px;
+}
+
+.symbolInput {
+  width: 15em;
+  border-radius: 4px;
+  background-color: rgba(255, 255, 255, 0.3);
+  transition: 0.3s all;
+  padding: 5px;
+  margin: 5px;
+}
+
+.symbolInput:hover {
+  background-color: rgba(255, 255, 255, 0.45);
+  box-shadow: 0px 4px 20px 0px rgba(0, 0, 0, 0.05);
+}
+
+.companyTable {
+  margin-top: 1em;
+  height: 300px;
+  width: 100%;
+  box-shadow: 4px 4px 4px grey;
+}
+
+.card {
+  margin-top: 1em;
+  margin-bottom: 5em;
+  text-align: left;
+}
+
+.card > h4 {
+  padding-left: 1em;
+  padding-top: 0.5em;
+}

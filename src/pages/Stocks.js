@@ -9,52 +9,42 @@ import {
   DropdownItem,
 } from "reactstrap";
 
-import { BrowserRouter as Router, Switch, Route, Link } from "react-router-dom";
-import PriceHistory from "./PriceHistory";
+import { useHistory } from "react-router-dom";
 
 import { useState, useEffect } from "react";
 
-import "./pages.css";
-
-const ALPHA_API_KEY = process.env.REACT_APP_ALPHA_API_KEY;
+import "./Stocks.css";
 
 export default function Stocks() {
-  const [rowData, setRowData] = useState([]);
+  const [companyData, setCompanyData] = useState([]);
   //Permanently storing the whole fetched data for search function
   const [fullCompanyData, setFullCompanyData] = useState([]);
+
+  const [error, setError] = useState(null);
+  const [isLoaded, setIsLoaded] = useState(false);
 
   //for Dropdown component
   const [dropdownOpen, setOpen] = useState(false);
   const toggle = () => setOpen(!dropdownOpen);
 
-  //url to fetch the data to put in the table
-  const url =
-    "https://financialmodelingprep.com/api/v3/nasdaq_constituent?apikey=a061788633309dc50960045d59051a3a";
-
   //definition of columns
   const columns = [
-    {
-      headerName: "Symbol",
-      field: "symbol",
-      // cellRenderer: function (params) {
-      //   let link_dummy = `<a href={'/history?symbol=${params.data.symbol}'} target="_blank">
-      //   ${params.data.symbol}
-      // </a>`;
-
-      //   return link_dummy;
-      // },
-    },
-    { headerName: "Name", field: "name" },
-    { headerName: "Industry", field: "industry" },
+    { headerName: "Symbol", field: "symbol", resizable: true, flex: 1 },
+    { headerName: "Name", field: "name", resizable: true, flex: 2 },
+    { headerName: "Industry", field: "industry", resizable: true, flex: 1 },
   ];
 
+  //using history for routing
+  const history = useHistory();
+
+  //function to filter companies by the industry
   const filterCompanyDataByIndustry = (e) => {
     //if the passed industry is null, display the whole data
     const filteredCompany =
       e === null
         ? fullCompanyData
         : fullCompanyData.filter((com) => com.industry === e);
-    setRowData(filteredCompany);
+    setCompanyData(filteredCompany);
   };
 
   //function to get unique items in the array
@@ -68,28 +58,27 @@ export default function Stocks() {
   //function to filter company by specified symbol
   const filterCompanyDataBySymbol = (searchKeyWord) => {
     if (searchKeyWord.length === 0) {
-      setRowData(fullCompanyData);
+      setCompanyData(fullCompanyData);
     } else {
       const filteredCompany = fullCompanyData.filter(function (com) {
         return com.symbol.includes(searchKeyWord.toUpperCase());
       });
-      setRowData(filteredCompany);
+      setCompanyData(filteredCompany);
     }
   };
 
+  //when a cell in the table clicked, jumping to the selected company's history page
   const onCellClicked = (value) => {
     const symbol = value.data.symbol;
-    const uri = `/history?symbol=${symbol}`;
-    console.log(uri);
-    return (
-      <Router>
-        <Link to={uri}></Link>
-      </Router>
-    );
+    const uri = `/history/${symbol}`;
+    history.push(uri);
   };
 
+  //asynchronously fetching data from the server using useEffect
   useEffect(() => {
-    fetch(url)
+    fetch(
+      "https://financialmodelingprep.com/api/v3/nasdaq_constituent?apikey=a061788633309dc50960045d59051a3a"
+    )
       .then((res) => res.json())
       .then((data) =>
         data.map((company) => {
@@ -100,55 +89,96 @@ export default function Stocks() {
           };
         })
       )
-      .then((companies) => {
-        setRowData(companies);
-        setFullCompanyData(companies);
-        console.log("hit the server");
-      });
+      .then(
+        (companies) => {
+          setIsLoaded(true);
+          setCompanyData(companies);
+          setFullCompanyData(companies);
+          console.log("fetched data");
+        },
+        (error) => {
+          setIsLoaded(true);
+          setError(error);
+        }
+      );
   }, []);
 
-  return (
-    <div className="container">
+  if (error) {
+    return <div>Error: {error.message}</div>;
+  } else if (!isLoaded) {
+    return <div>Loading...</div>;
+  } else {
+    return (
       <div>
-        <p>Select the stock to display</p>
-        <input
-          aria-labelledby="search-button"
-          name="searchBySymbol"
-          placeholder="type symbol..."
-          id="searchBySymbol"
-          type="search"
-          onChange={(e) => filterCompanyDataBySymbol(e.target.value)}
-        />
-        <ButtonDropdown isOpen={dropdownOpen} toggle={toggle}>
-          <DropdownToggle
-            onClick={() => filterCompanyDataByIndustry(null)} //when click toggle button, refresh the table without hitting the server
-            caret
-          >
-            Select Industry
-          </DropdownToggle>
-          <DropdownMenu>
-            {industries.map((industry) => (
-              <DropdownItem
-                onClick={() => filterCompanyDataByIndustry(industry)}
-                key={industry}
+        <header>
+          <h1>Stocks</h1>
+        </header>
+        <main>
+          <div className="container">
+            <div className="clearfix">
+              <input
+                aria-labelledby="search-button"
+                className="float-left symbolInput"
+                name="searchBySymbol"
+                placeholder="type symbol..."
+                id="searchBySymbol"
+                type="search"
+                onChange={(e) => filterCompanyDataBySymbol(e.target.value)}
+              />
+              <ButtonDropdown
+                className="float-right industryButton"
+                isOpen={dropdownOpen}
+                toggle={toggle}
               >
-                {industry}
-              </DropdownItem>
-            ))}
-          </DropdownMenu>
-        </ButtonDropdown>
+                <DropdownToggle
+                  onClick={() => filterCompanyDataByIndustry(null)} //when click toggle button, refresh the table without hitting the server
+                  caret
+                >
+                  Select Industry
+                </DropdownToggle>
+                <DropdownMenu>
+                  {industries.map((industry) => (
+                    <DropdownItem
+                      onClick={() => filterCompanyDataByIndustry(industry)}
+                      key={industry}
+                    >
+                      {industry}
+                    </DropdownItem>
+                  ))}
+                </DropdownMenu>
+              </ButtonDropdown>
+            </div>
+            <div className="ag-theme-balham companyTable">
+              <AgGridReact
+                columnDefs={columns}
+                onCellClicked={onCellClicked}
+                rowData={companyData}
+                pagination={true}
+              />
+            </div>
+            <div className="card">
+              <h4>
+                <u>How to use:</u>
+              </h4>
+
+              <ol>
+                <li>
+                  To see the history of stock for a company, click the company's
+                  row in the table.
+                </li>
+                <li>
+                  To filter companies by symbol, type the symbol on the top left
+                  corner.
+                </li>
+                <li>
+                  To filter companies by industry, select the industry from the
+                  dropdown box on the top right corner.
+                </li>
+              </ol>
+            </div>
+          </div>
+        </main>
       </div>
-      <div
-        className="ag-theme-balham"
-        style={{ height: "300px", width: "80%" }}
-      >
-        <AgGridReact
-          columnDefs={columns}
-          onCellClicked={onCellClicked}
-          rowData={rowData}
-          pagination={true}
-        />
-      </div>
-    </div>
-  );
+    );
+  }
 }
