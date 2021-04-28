@@ -7,7 +7,7 @@ header {
 }
 
 main {
-  padding-top: 1em;
+  padding-top: 0.5em;
   background-color: white;
 }
 
@@ -40,6 +40,7 @@ main {
   margin-top: 1em;
   margin-bottom: 5em;
   text-align: left;
+  background-color: rgba(242, 237, 237, 0.5) !important ;
 }
 
 .card > h4 {

@@ -5,8 +5,9 @@ export default function Home() {
     <div className="home-background">
       <h1>Stock up</h1>
       <h2>
-        Welcome to the Stock Price Checker! In order to check the price of
-        stocks on the market, go to "Stocks" page.
+        This website proveides you the list of companies on the stock market and
+        allows you to view and analyses stock data. In order to see the list of
+        the company, go to "Stocks" page.
       </h2>
     </div>
   );
