@@ -8,13 +8,13 @@
   padding-bottom: 8em;
   opacity: 0.8;
 }
-.home-background > h1 {
+.home-title {
   font-size: 13vw;
   text-shadow: 0.5vw 0.5vw black;
 }
 
-.home-background > h2 {
-  font-size: 4vw;
-  padding: 1em 1em;
+.home-description {
+  font-size: 3vw;
+  padding: 1em 3em;
   text-shadow: 0.2vw 0.2vw black;
 }

@@ -74,11 +74,12 @@ export default function Stocks() {
     history.push(uri);
   };
 
+  const URL_COMPANY_OVERVIEW =
+    "https://financialmodelingprep.com/api/v3/nasdaq_constituent?apikey=a061788633309dc50960045d59051a3a";
+
   //asynchronously fetching data from the server using useEffect
   useEffect(() => {
-    fetch(
-      "https://financialmodelingprep.com/api/v3/nasdaq_constituent?apikey=a061788633309dc50960045d59051a3a"
-    )
+    fetch(URL_COMPANY_OVERVIEW)
       .then((res) => res.json())
       .then((data) =>
         data.map((company) => {
