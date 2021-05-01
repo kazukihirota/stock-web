@@ -1,6 +1,6 @@
 import { AgGridReact } from "ag-grid-react";
 import "ag-grid-community/dist/styles/ag-grid.css";
-import "ag-grid-community/dist/styles/ag-theme-balham.css";
+import "ag-grid-community/dist/styles/ag-theme-balham-dark.css";
 
 import { useState, useEffect } from "react";
 
@@ -72,10 +72,10 @@ export default function PriceHistory() {
     history.push(uri);
   };
 
+  const historyDataURL = `https://www.alphavantage.co/query?function=TIME_SERIES_DAILY&symbol=${symbol}&apikey=${ALPHA_API_KEY}`;
+  //fetching the data from
   useEffect(() => {
-    fetch(
-      `https://www.alphavantage.co/query?function=TIME_SERIES_DAILY&symbol=${symbol}&apikey=${ALPHA_API_KEY}`
-    )
+    fetch(historyDataURL)
       .then((res) => res.json())
       .then((data) => data["Time Series (Daily)"])
       .then((dailyData) =>
@@ -118,8 +118,8 @@ export default function PriceHistory() {
         <main>
           <div className="container">
             <h3>Showing history of stocks for {symbol}</h3>
-            <div className="clearfix">
-              <div className="dateFromButton float-left">
+            <div className="flex-container">
+              <div className="date-from-button">
                 <ButtonDropdown isOpen={dropdownOpen} toggle={toggle}>
                   <DropdownToggle
                     onClick={() => filterByDate(stockHistory, null)} //when click toggle button, refresh the table without hitting the server
@@ -127,7 +127,25 @@ export default function PriceHistory() {
                   >
                     Select the date from
                   </DropdownToggle>
-                  <DropdownMenu>
+                  <DropdownMenu
+                    //setting for scrollable dropdown list
+                    modifiers={{
+                      setMaxHeight: {
+                        enabled: true,
+                        order: 890,
+                        fn: (data) => {
+                          return {
+                            ...data,
+                            styles: {
+                              ...data.styles,
+                              overflow: "auto",
+                              maxHeight: 200,
+                            },
+                          };
+                        },
+                      },
+                    }}
+                  >
                     {dates.map((date) => (
                       <DropdownItem
                         onClick={() => filterByDate(stockHistory, date)}
@@ -139,14 +157,16 @@ export default function PriceHistory() {
                   </DropdownMenu>
                 </ButtonDropdown>
               </div>
-              <div className="float-right">
-                <Button color="danger" onClick={() => goBackToStocks()}>
-                  Go back to Stock page
-                </Button>
-              </div>
+              <Button
+                className="return-to-stock-btn"
+                color="danger"
+                onClick={() => goBackToStocks()}
+              >
+                Return to Stock page
+              </Button>
             </div>
 
-            <div className="ag-theme-balham historyTable">
+            <div className="ag-theme-balham-dark historyTable">
               <AgGridReact
                 columnDefs={columns}
                 rowData={stockHistory}

@@ -11,3 +11,17 @@ header {
   height: 300px;
   width: 100%;
 }
+
+.chart {
+  margin-top: 5vh;
+}
+
+.flex-container {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.return-to-stock-btn {
+  white-space: nowrap;
+}

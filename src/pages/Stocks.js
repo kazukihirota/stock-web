@@ -1,6 +1,6 @@
 import { AgGridReact } from "ag-grid-react";
 import "ag-grid-community/dist/styles/ag-grid.css";
-import "ag-grid-community/dist/styles/ag-theme-balham.css";
+import "ag-grid-community/dist/styles/ag-theme-balham-dark.css";
 
 import {
   ButtonDropdown,
@@ -74,12 +74,12 @@ export default function Stocks() {
     history.push(uri);
   };
 
-  const URL_COMPANY_OVERVIEW =
+  const companyOvervieURL =
     "https://financialmodelingprep.com/api/v3/nasdaq_constituent?apikey=a061788633309dc50960045d59051a3a";
 
   //asynchronously fetching data from the server using useEffect
   useEffect(() => {
-    fetch(URL_COMPANY_OVERVIEW)
+    fetch(companyOvervieURL)
       .then((res) => res.json())
       .then((data) =>
         data.map((company) => {
@@ -149,7 +149,7 @@ export default function Stocks() {
                 </DropdownMenu>
               </ButtonDropdown>
             </div>
-            <div className="ag-theme-balham companyTable">
+            <div className="ag-theme-balham-dark companyTable">
               <AgGridReact
                 columnDefs={columns}
                 onCellClicked={onCellClicked}
