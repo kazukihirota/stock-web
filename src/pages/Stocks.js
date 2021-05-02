@@ -20,6 +20,8 @@ export default function Stocks() {
   //Permanently storing the whole fetched data for search function
   const [fullCompanyData, setFullCompanyData] = useState([]);
 
+  const [searchKeyword, setSearchKeyword] = useState("");
+
   const [error, setError] = useState(null);
   const [isLoaded, setIsLoaded] = useState(false);
 
@@ -38,12 +40,38 @@ export default function Stocks() {
   const history = useHistory();
 
   //function to filter companies by the industry
-  const filterCompanyDataByIndustry = (e) => {
+  const filterCompanyDataByIndustry = (selectedIndustry) => {
     //if the passed industry is null, display the whole data
-    const filteredCompany =
-      e === null
-        ? fullCompanyData
-        : fullCompanyData.filter((com) => com.industry === e);
+    let filteredCompany;
+    if (selectedIndustry === "Select All") filteredCompany = fullCompanyData;
+    else if (
+      //when a user selects an industry from another industry and there is no input in search by symbol
+      searchKeyword === "" &&
+      companyData.filter((company) => company.industry === selectedIndustry)
+        .length === 0
+    )
+      //filter companies using full company data
+      filteredCompany = fullCompanyData.filter(
+        (company) => company.industry === selectedIndustry
+      );
+    else if (
+      //when a user selects an industry from another industry and the symbol is also specified
+      searchKeyword !== "" &&
+      companyData.filter((company) => company.industry === selectedIndustry)
+        .length === 0
+    ) {
+      //filtering company with the specified keyword by a user
+      const companiesWithTheKeyword = fullCompanyData.filter(function (com) {
+        return com.symbol.includes(searchKeyword.toUpperCase());
+      });
+      filteredCompany = companiesWithTheKeyword.filter(
+        (company) => company.industry === selectedIndustry
+      );
+    } else
+      filteredCompany = companyData.filter(
+        (company) => company.industry === selectedIndustry
+      );
+
     setCompanyData(filteredCompany);
   };
 
@@ -53,15 +81,20 @@ export default function Stocks() {
   };
 
   //filtering unique industry in the dataset
-  const industries = fullCompanyData.map((a) => a.industry).filter(onlyUnique);
+  //adding "Select All" so that user can
+  const industries = [
+    ...fullCompanyData.map((a) => a.industry).filter(onlyUnique),
+    "Select All",
+  ];
 
   //function to filter company by specified symbol
-  const filterCompanyDataBySymbol = (searchKeyWord) => {
-    if (searchKeyWord.length === 0) {
+  const filterCompanyDataBySymbol = (input) => {
+    setSearchKeyword(input);
+    if (input.length === 0) {
       setCompanyData(fullCompanyData);
     } else {
       const filteredCompany = fullCompanyData.filter(function (com) {
-        return com.symbol.includes(searchKeyWord.toUpperCase());
+        return com.symbol.includes(input.toUpperCase());
       });
       setCompanyData(filteredCompany);
     }
@@ -95,7 +128,6 @@ export default function Stocks() {
           setIsLoaded(true);
           setCompanyData(companies);
           setFullCompanyData(companies);
-          console.log("fetched data");
         },
         (error) => {
           setIsLoaded(true);
@@ -131,17 +163,13 @@ export default function Stocks() {
                 isOpen={dropdownOpen}
                 toggle={toggle}
               >
-                <DropdownToggle
-                  onClick={() => filterCompanyDataByIndustry(null)} //when click toggle button, refresh the table without hitting the server
-                  caret
-                >
-                  Select Industry
-                </DropdownToggle>
+                <DropdownToggle caret>Select Industry</DropdownToggle>
                 <DropdownMenu>
                   {industries.map((industry) => (
                     <DropdownItem
                       onClick={() => filterCompanyDataByIndustry(industry)}
                       key={industry}
+                      className={industry.replace(/\s+/g, "")}
                     >
                       {industry}
                     </DropdownItem>
@@ -164,12 +192,12 @@ export default function Stocks() {
 
               <ol>
                 <li>
-                  To see the history of stock for a company, click the company's
-                  row in the table.
+                  To see the historical data of stock for a company, click the
+                  company's row in the table.
                 </li>
                 <li>
-                  To filter companies by symbol, type the symbol on the top left
-                  corner.
+                  To filter companies by symbol, type the symbol into the input
+                  field on the top left corner.
                 </li>
                 <li>
                   To filter companies by industry, select the industry from the

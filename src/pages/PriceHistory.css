@@ -6,8 +6,17 @@ header {
   color: white;
 }
 
+.container {
+  max-width: 80% !important;
+  padding-top: 2vh;
+}
+
+.container > h2 {
+  margin-bottom: 2vh;
+}
+
 .historyTable {
-  margin-top: 1em;
+  margin-top: 2vh;
   height: 300px;
   width: 100%;
 }

@@ -117,7 +117,7 @@ export default function PriceHistory() {
         </header>
         <main>
           <div className="container">
-            <h3>Showing history of stocks for {symbol}</h3>
+            <h2>Showing history of stocks for {symbol}</h2>
             <div className="flex-container">
               <div className="date-from-button">
                 <ButtonDropdown isOpen={dropdownOpen} toggle={toggle}>
@@ -203,6 +203,16 @@ function DrawChart({ history }) {
 
   const options = {
     maintainAspectRatio: false,
+    axes: [
+      {
+        type: "category",
+        position: "bottom",
+        title: {
+          text: "Day",
+          enabled: true,
+        },
+      },
+    ],
     scales: {
       yAxes: [
         {
@@ -220,7 +230,7 @@ function DrawChart({ history }) {
 
   return (
     <div>
-      <Line data={data} options={options} />
+      <Line data={data} options={options} xName="Day" yName="Price($)" />
     </div>
   );
 }
