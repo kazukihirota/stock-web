@@ -47,10 +47,11 @@ export default function PriceHistory() {
     { headerName: "Volumes", field: "volumes", resizable: true, flex: 1 },
   ];
 
+  //for dropdown button
   const dates = stockHistory.map((item) => item.date);
 
   //input array of history data and specified date, return the new array that contains data after the date
-  const filterByDate = function (arr, date) {
+  const filterByDate = (arr, date) => {
     const output = [];
     const dateFrom = new Date(date);
     if (date === null) setStockHistory(stockHistoryCopy);
@@ -173,9 +174,7 @@ export default function PriceHistory() {
                 pagination={true}
               />
             </div>
-            <div className="chart">
-              <DrawChart history={stockHistory} />
-            </div>
+            <DrawChart history={stockHistory} />
           </div>
         </main>
       </div>
@@ -186,14 +185,14 @@ export default function PriceHistory() {
 //Component for the Chart
 function DrawChart({ history }) {
   const dates = history.map((item) => item.date).reverse();
-  const prices = history.map((item) => item.close).reverse();
+  const closingPrices = history.map((item) => item.close).reverse();
 
   const data = {
     labels: dates,
     datasets: [
       {
-        label: "Closing price",
-        data: prices,
+        label: "Closing price ($)",
+        data: closingPrices,
         fill: false,
         backgroundColor: "rgb(255, 99, 132)",
         borderColor: "rgba(255, 99, 132, 0.2)",
@@ -203,34 +202,11 @@ function DrawChart({ history }) {
 
   const options = {
     maintainAspectRatio: false,
-    axes: [
-      {
-        type: "category",
-        position: "bottom",
-        title: {
-          text: "Day",
-          enabled: true,
-        },
-      },
-    ],
-    scales: {
-      yAxes: [
-        {
-          scaleLabel: {
-            display: true,
-            labelString: "Price($)",
-          },
-          ticks: {
-            beginAtZero: true,
-          },
-        },
-      ],
-    },
   };
 
   return (
-    <div>
-      <Line data={data} options={options} xName="Day" yName="Price($)" />
+    <div className="chart">
+      <Line data={data} options={options} height={200} />
     </div>
   );
 }

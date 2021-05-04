@@ -16,12 +16,15 @@ import { useState, useEffect } from "react";
 import "./Stocks.css";
 
 export default function Stocks() {
+  //storing fetched data for the table
   const [companyData, setCompanyData] = useState([]);
   //Permanently storing the whole fetched data for search function
   const [fullCompanyData, setFullCompanyData] = useState([]);
 
+  //store the symbol input by user
   const [searchKeyword, setSearchKeyword] = useState("");
 
+  //for error and loading state handling
   const [error, setError] = useState(null);
   const [isLoaded, setIsLoaded] = useState(false);
 
@@ -61,7 +64,7 @@ export default function Stocks() {
         .length === 0
     ) {
       //filtering company with the specified keyword by a user
-      const companiesWithTheKeyword = fullCompanyData.filter(function (com) {
+      const companiesWithTheKeyword = fullCompanyData.filter((com) => {
         return com.symbol.includes(searchKeyword.toUpperCase());
       });
       filteredCompany = companiesWithTheKeyword.filter(
@@ -76,7 +79,7 @@ export default function Stocks() {
   };
 
   //function to get unique items in the array
-  const onlyUnique = function (value, index, self) {
+  const onlyUnique = (value, index, self) => {
     return self.indexOf(value) === index;
   };
 
@@ -93,8 +96,8 @@ export default function Stocks() {
     if (input.length === 0) {
       setCompanyData(fullCompanyData);
     } else {
-      const filteredCompany = fullCompanyData.filter(function (com) {
-        return com.symbol.includes(input.toUpperCase());
+      const filteredCompany = fullCompanyData.filter((company) => {
+        return company.symbol.includes(input.toUpperCase());
       });
       setCompanyData(filteredCompany);
     }
@@ -107,6 +110,7 @@ export default function Stocks() {
     history.push(uri);
   };
 
+  //for some reason when I store the API key in .env file it did not work properly
   const companyOvervieURL =
     "https://financialmodelingprep.com/api/v3/nasdaq_constituent?apikey=a061788633309dc50960045d59051a3a";
 
